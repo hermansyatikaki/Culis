@@ -174,11 +174,21 @@ cfg_path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
 json.loads(cfg_path.read_text(encoding="utf-8"))
 PY
 
-cat > "$DEX2C_DIR/project/jni/Application.mk" <<'EOF_APP'
+# Pilihan arch dari bot (INPUT_ARCH) menentukan ABI yang di-build.
+# Tanpa ini, ndk-build selalu membuat 4 ABI incl. x86/x86_64 walau
+# user hanya pilih ARM64 + ARMv7.
+case "${INPUT_ARCH:-both}" in
+  arm64) APP_ABI_VALUE="arm64-v8a" ;;
+  armv7) APP_ABI_VALUE="armeabi-v7a" ;;
+  *) APP_ABI_VALUE="armeabi-v7a arm64-v8a" ;;
+esac
+echo "APP_ABI dipakai: $APP_ABI_VALUE (INPUT_ARCH=${INPUT_ARCH:-both})"
+
+cat > "$DEX2C_DIR/project/jni/Application.mk" <<EOF_APP
 APP_STL := c++_static
 APP_CPPFLAGS += -fvisibility=hidden
 APP_PLATFORM := android-19
-APP_ABI := armeabi-v7a arm64-v8a x86 x86_64
+APP_ABI := $APP_ABI_VALUE
 APP_SHORT_COMMANDS := true
 EOF_APP
 
