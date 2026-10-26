@@ -7,6 +7,49 @@ on:
         description: APK path
         required: true
         default: "Miku Moe.apk"
+      package_name:
+        description: Package name
+        required: false
+        default: ""
+      include_rules:
+        description: Include rules
+        required: false
+        default: ""
+      exclude_rules:
+        description: Exclude rules
+        required: false
+        default: ""
+      lib_name:
+        description: Brand library name
+        required: false
+        default: "mikumoe"
+      custom_loader:
+        description: Custom loader class
+        required: false
+        default: "miku.moe.app.DccApplication"
+      obfuscate:
+        description: Obfuscate
+        required: false
+        type: boolean
+        default: false
+      dynamic_register:
+        description: Dynamic register
+        required: false
+        type: boolean
+        default: false
+      max_attempts:
+        description: Max attempts
+        required: false
+        default: "5"
+      cleanup_apk:
+        description: Cleanup APK
+        required: false
+        type: boolean
+        default: true
+      arch:
+        description: Target architecture
+        required: false
+        default: "both"
 
 jobs:
   protect:
@@ -68,6 +111,16 @@ jobs:
       - name: Protect APK
         env:
           INPUT_APK: ${{ github.event.inputs.apk_path }}
+          INPUT_PACKAGE_NAME: ${{ github.event.inputs.package_name }}
+          INPUT_INCLUDE_RULES: ${{ github.event.inputs.include_rules }}
+          INPUT_EXCLUDE_RULES: ${{ github.event.inputs.exclude_rules }}
+          INPUT_LIB_NAME: ${{ github.event.inputs.lib_name }}
+          INPUT_CUSTOM_LOADER: ${{ github.event.inputs.custom_loader }}
+          INPUT_OBFUSCATE: ${{ github.event.inputs.obfuscate }}
+          INPUT_DYNAMIC_REGISTER: ${{ github.event.inputs.dynamic_register }}
+          INPUT_MAX_ATTEMPTS: ${{ github.event.inputs.max_attempts }}
+          INPUT_CLEANUP_APK: ${{ github.event.inputs.cleanup_apk }}
+          INPUT_ARCH: ${{ github.event.inputs.arch }}
         run: scripts/protect-apk.sh
 
       - name: Upload artifact
