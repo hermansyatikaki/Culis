@@ -333,6 +333,23 @@ fi
 
 cp "$DEX2C_DIR/output.apk" "$UNSIGNED_APK"
 
+# Hapus folder lib/ arsitektur yang TIDAK dipilih user (INPUT_ARCH).
+# APK asli sudah membawa lib x86/x86_64; dex2c mempertahankannya, jadi
+# tanpa langkah ini mereka tetap ada di hasil akhir walau APP_ABI benar.
+case "${INPUT_ARCH:-both}" in
+  arm64) STRIP_ABIS="armeabi-v7a x86 x86_64" ;;
+  armv7) STRIP_ABIS="arm64-v8a x86 x86_64" ;;
+  *) STRIP_ABIS="x86 x86_64" ;;
+esac
+for ABI in $STRIP_ABIS; do
+  if unzip -l "$UNSIGNED_APK" "lib/$ABI/*" >/dev/null 2>&1; then
+    echo "Menghapus lib/$ABI/ (tidak dipilih)"
+    zip -d -q "$UNSIGNED_APK" "lib/$ABI/*" || true
+  fi
+done
+echo "Isi lib/ setelah strip:"
+unzip -l "$UNSIGNED_APK" "lib/*/*.so" | awk '{print $4}' | sort -u || true
+
 if printf '%s\n' "$ZIPALIGN_HELP" | grep -q -- "-P <pagesize_kb>"; then
 zipalign -P 16 -f 4 "$UNSIGNED_APK" "$FINAL_APK"
 else
