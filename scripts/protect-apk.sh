@@ -310,7 +310,7 @@ java -jar "tools/apktool.jar" --version
 cat project/jni/Application.mk
 cat project/jni/Android.mk
 set +e
-python3 dcc.py -a input.apk -o output.apk --disable-signing 2>&1 | tee "../../$WORK_DIR/dex2c-attempt.log"
+python3 dcc.py -a input.apk -o output.apk --disable-signing --custom-loader "${INPUT_CUSTOM_LOADER:-miku.moe.solid.miku}" 2>&1 | tee "../../$WORK_DIR/dex2c-attempt.log"
 DCC_STATUS="${PIPESTATUS[0]}"
 set -e
 cd ../..

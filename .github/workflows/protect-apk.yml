@@ -26,7 +26,7 @@ on:
       custom_loader:
         description: Custom loader class
         required: false
-        default: "miku.moe.app.DccApplication"
+        default: "miku.moe.solid.miku"
       obfuscate:
         description: Obfuscate
         required: false
